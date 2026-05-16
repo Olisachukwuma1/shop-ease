@@ -55,6 +55,10 @@ router.post('/login', async (req, res) => {
     user.authCode = code
     user.authCodeExpires = new Date(Date.now() + 10 * 60 * 1000)
     await user.save()
+    console.log('=================================')
+console.log('OTP CODE:', code)
+console.log('FOR USER:', user.email)
+console.log('=================================')
 
     console.log('Auth code:', code)
 
@@ -153,7 +157,10 @@ router.post('/resend-code', async (req, res) => {
     user.authCode = code
     user.authCodeExpires = new Date(Date.now() + 10 * 60 * 1000)
     await user.save()
-
+console.log('=================================')
+console.log('RESENT OTP CODE:', code)
+console.log('FOR USER:', user.email)
+console.log('=================================')
     console.log('Resent auth code:', code)
 
     try {
