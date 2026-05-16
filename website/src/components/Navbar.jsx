@@ -23,9 +23,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold text-blue-600">
-          Shop Ease
-        </Link>
+    <Link href="/" style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.3rem', fontWeight: 700, color: 'var(--black)', textDecoration: 'none' }}>
+  Shop<span style={{ color: '#c9a84c' }}>Ease</span>
+</Link> 
 
         {/* Right side — links + cart + user all together */}
         <div className="flex items-center gap-5">
