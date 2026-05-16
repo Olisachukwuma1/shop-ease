@@ -21,12 +21,12 @@ export default function Login() {
 
     const result = await dispatch(login({ email, password }))
 
-    if (login.fulfilled.match(result)) {
-      toast.success('Login successful!')
-      router.push('/dashboard')
-    } else {
-      toast.error(result.payload || 'Login failed')
-    }
+ if (login.fulfilled.match(result)) {
+  toast.success('Login successful!')
+  router.push('/verify')
+} else {
+  toast.error(result.payload || 'Login failed')
+}
   }
 
   return (
