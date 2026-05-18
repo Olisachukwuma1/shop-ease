@@ -1,4 +1,3 @@
- 
 'use client'
 
 import { useState } from 'react'
@@ -10,6 +9,15 @@ import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import { toast } from 'react-toastify'
 
+const NIGERIAN_STATES = [
+  'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa',
+  'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo',
+  'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe', 'Imo', 'Jigawa',
+  'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara',
+  'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun',
+  'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
+]
+
 export default function Checkout() {
   const dispatch = useDispatch()
   const router = useRouter()
@@ -19,13 +27,30 @@ export default function Checkout() {
   const [street, setStreet] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
+  const [stateSearch, setStateSearch] = useState('')
+  const [showStateDropdown, setShowStateDropdown] = useState(false)
   const [country, setCountry] = useState('Nigeria')
 
   const shippingFee = totalAmount >= 20000 ? 0 : 2000
   const grandTotal = totalAmount + shippingFee
 
+  const filteredStates = NIGERIAN_STATES.filter(s =>
+    s.toLowerCase().includes(stateSearch.toLowerCase())
+  )
+
+  const handleStateSelect = (selectedState) => {
+    setState(selectedState)
+    setStateSearch(selectedState)
+    setShowStateDropdown(false)
+  }
+
   const handlePayment = async (e) => {
     e.preventDefault()
+
+    if (!state) {
+      toast.error('Please select a state')
+      return
+    }
 
     if (items.length === 0) {
       toast.error('Your cart is empty')
@@ -55,7 +80,6 @@ export default function Checkout() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
-      // Redirect to Paystack payment page
       window.location.href = res.data.authorization_url
 
     } catch (err) {
@@ -70,7 +94,6 @@ export default function Checkout() {
 
       <div style={{ padding: '4rem 5rem', flex: 1 }}>
 
-        {/* Header */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.5rem' }}>
             Almost There
@@ -89,6 +112,8 @@ export default function Checkout() {
                 Shipping Address
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+
+                {/* Street */}
                 <div>
                   <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
                     Street Address
@@ -99,10 +124,13 @@ export default function Checkout() {
                     onChange={(e) => setStreet(e.target.value)}
                     required
                     placeholder="123 Main Street"
-                    style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '2px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)', transition: 'border 0.2s' }}
+                    style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
                   />
                 </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+
+                  {/* City */}
                   <div>
                     <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
                       City
@@ -113,23 +141,62 @@ export default function Checkout() {
                       onChange={(e) => setCity(e.target.value)}
                       required
                       placeholder="Lagos"
-                      style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '2px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
+                      style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
                     />
                   </div>
-                  <div>
+
+                  {/* State - Searchable Dropdown */}
+                  <div style={{ position: 'relative' }}>
                     <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
                       State
                     </label>
-                    <input
-                      type="text"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      required
-                      placeholder="Lagos State"
-                      style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '2px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="text"
+                        value={stateSearch}
+                        onChange={(e) => {
+                          setStateSearch(e.target.value)
+                          setState('')
+                          setShowStateDropdown(true)
+                        }}
+                        onFocus={() => setShowStateDropdown(true)}
+                        required
+                        placeholder="Search state..."
+                        style={{ width: '100%', border: `1.5px solid ${showStateDropdown ? 'var(--gold)' : 'var(--border)'}`, borderRadius: '8px', padding: '0.9rem 2.5rem 0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)', cursor: 'pointer' }}
+                      />
+                      {/* Dropdown Arrow */}
+                      <span style={{ position: 'absolute', right: '1rem', top: '50%', transform: `translateY(-50%) rotate(${showStateDropdown ? '180deg' : '0deg'})`, transition: 'transform 0.2s', color: 'var(--muted)', pointerEvents: 'none', fontSize: '0.75rem' }}>
+                        ▼
+                      </span>
+                    </div>
+
+                    {/* Dropdown List */}
+                    {showStateDropdown && (
+                      <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'var(--white)', border: '1.5px solid var(--gold)', borderRadius: '8px', maxHeight: '200px', overflowY: 'auto', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                        {filteredStates.length === 0 ? (
+                          <div style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--muted)', textAlign: 'center' }}>
+                            No state found
+                          </div>
+                        ) : (
+                          filteredStates.map((s) => (
+                            <div
+                              key={s}
+                              onClick={() => handleStateSelect(s)}
+                              style={{ padding: '0.7rem 1rem', fontSize: '0.875rem', color: 'var(--black)', cursor: 'pointer', transition: 'background 0.15s', background: state === s ? 'var(--cream)' : 'transparent', borderBottom: '1px solid var(--border)' }}
+                              onMouseEnter={e => e.currentTarget.style.background = 'var(--cream)'}
+                              onMouseLeave={e => e.currentTarget.style.background = state === s ? 'var(--cream)' : 'transparent'}
+                            >
+                              {state === s && <span style={{ color: 'var(--gold)', marginRight: '0.5rem' }}>✓</span>}
+                              {s}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Country */}
                 <div>
                   <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
                     Country
@@ -139,13 +206,14 @@ export default function Checkout() {
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     required
-                    style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '2px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
+                    style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
                   />
                 </div>
+
               </div>
 
               {/* Payment Info */}
-              <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--cream)', borderRadius: '4px', border: '1px solid var(--border)' }}>
+              <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--cream)', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
                   <span style={{ fontSize: '1.5rem' }}>🔒</span>
                   <div>
@@ -160,16 +228,15 @@ export default function Checkout() {
             </div>
 
             {/* Order Summary */}
-            <div style={{ background: 'var(--cream)', borderRadius: '4px', padding: '2rem', border: '1px solid var(--border)', position: 'sticky', top: '100px' }}>
+            <div style={{ background: 'var(--cream)', borderRadius: '12px', padding: '2rem', border: '1px solid var(--border)', position: 'sticky', top: '100px' }}>
               <h3 className="font-playfair" style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--black)' }}>
                 Order Summary
               </h3>
 
-              {/* Items */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '250px', overflowY: 'auto' }}>
                 {items.map((item) => (
                   <div key={item._id} style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                    <div style={{ width: '48px', height: '48px', background: 'var(--white)', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
+                    <div style={{ width: '48px', height: '48px', background: 'var(--white)', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
                       {item.images?.[0] ? (
                         <img src={item.images[0]} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
@@ -210,14 +277,23 @@ export default function Checkout() {
               <button
                 type="submit"
                 disabled={loading || items.length === 0}
-                style={{ width: '100%', background: 'var(--gold)', color: 'var(--white)', border: 'none', padding: '1rem', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '2px', transition: 'all 0.25s', opacity: loading || items.length === 0 ? 0.7 : 1 }}
+                style={{ width: '100%', background: 'var(--gold)', color: 'var(--white)', border: 'none', padding: '1rem', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '8px', transition: 'all 0.25s', opacity: loading || items.length === 0 ? 0.7 : 1 }}
               >
                 {loading ? 'Redirecting to Paystack...' : `Pay ₦${grandTotal.toLocaleString()}`}
               </button>
-
             </div>
+
           </div>
         </form>
+
+        {/* Close dropdown when clicking outside */}
+        {showStateDropdown && (
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 99 }}
+            onClick={() => setShowStateDropdown(false)}
+          />
+        )}
+
       </div>
 
       <Footer />

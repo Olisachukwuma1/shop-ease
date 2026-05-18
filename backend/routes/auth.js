@@ -60,7 +60,7 @@ console.log('OTP CODE:', code)
 console.log('FOR USER:', user.email)
 console.log('=================================')
 
-    console.log('Auth code:', code)
+
 
     // Send OTP via Resend
     try {
@@ -161,7 +161,7 @@ console.log('=================================')
 console.log('RESENT OTP CODE:', code)
 console.log('FOR USER:', user.email)
 console.log('=================================')
-    console.log('Resent auth code:', code)
+    
 
     try {
       await resend.emails.send({
