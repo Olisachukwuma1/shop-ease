@@ -24,10 +24,27 @@ if (couponCode) {
       discountAmount = coupon.discountValue
     }
   }
+  
 }
    const shippingFee = totalAmount >= 20000 ? 0 : 2000
     const grandTotal = totalAmount + shippingFee - discountAmount
     
+    const MAX_AMOUNT = 10000000 // ₦10M limit
+
+    if (grandTotal > MAX_AMOUNT) {
+      return res.status(400).json({
+        message: 'Amount too large. Please split the order or contact support.'
+      })
+    }
+
+    // 5. Convert to kobo
+    const amountInKobo = Math.round(grandTotal * 100)
+
+    if (amountInKobo <= 0) {
+      return res.status(400).json({
+        message: 'Invalid order amount'
+      })
+    }
     // Initialize Paystack transaction
     const response = await axios.post(
       'https://api.paystack.co/transaction/initialize',
