@@ -12,12 +12,28 @@ const Coupon = require('../models/Coupon')
 router.post('/initialize', auth, async (req, res) => {
   try {
     const { items, shippingAddress, totalAmount, couponCode } = req.body
+    let discountAmount = 0
+
+if (couponCode) {
+  const coupon = await Coupon.findOne({ code: couponCode })
+
+  if (coupon) {
+    if (coupon.discountType === 'percentage') {
+      discountAmount = (totalAmount * coupon.discountValue) / 100
+    } else {
+      discountAmount = coupon.discountValue
+    }
+  }
+}
+   const shippingFee = totalAmount >= 20000 ? 0 : 2000
+    const grandTotal = totalAmount + shippingFee - discountAmount
+    
     // Initialize Paystack transaction
     const response = await axios.post(
       'https://api.paystack.co/transaction/initialize',
       {
         email: req.user.email,
-        amount: totalAmount * 100, // Paystack uses kobo
+        amount: Math.round(grandTotal * 100), // Paystack uses kobo
         currency: 'NGN',
         callback_url: `${process.env.CLIENT_URL}/checkout/verify`,
         metadata: {
