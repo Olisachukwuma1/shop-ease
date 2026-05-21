@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
@@ -23,6 +23,7 @@ export default function Checkout() {
   const router = useRouter()
   const { items, totalAmount } = useSelector((state) => state.cart)
   const [loading, setLoading] = useState(false)
+  const [couponData, setCouponData] = useState(null)
 
   const [street, setStreet] = useState('')
   const [city, setCity] = useState('')
@@ -31,8 +32,16 @@ export default function Checkout() {
   const [showStateDropdown, setShowStateDropdown] = useState(false)
   const [country, setCountry] = useState('Nigeria')
 
+  useEffect(() => {
+    const savedCoupon = localStorage.getItem('appliedCoupon')
+    if (savedCoupon) {
+      setCouponData(JSON.parse(savedCoupon))
+    }
+  }, [])
+
+  const discountAmount = couponData ? couponData.discountAmount : 0
   const shippingFee = totalAmount >= 20000 ? 0 : 2000
-  const grandTotal = totalAmount + shippingFee
+  const grandTotal = totalAmount + shippingFee - discountAmount
 
   const filteredStates = NIGERIAN_STATES.filter(s =>
     s.toLowerCase().includes(stateSearch.toLowerCase())
@@ -76,10 +85,12 @@ export default function Checkout() {
           items: orderItems,
           shippingAddress: { street, city, state, country },
           totalAmount: grandTotal,
+          couponCode: couponData ? couponData.code : null,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
+      localStorage.removeItem('appliedCoupon')
       window.location.href = res.data.authorization_url
 
     } catch (err) {
@@ -164,13 +175,11 @@ export default function Checkout() {
                         placeholder="Search state..."
                         style={{ width: '100%', border: `1.5px solid ${showStateDropdown ? 'var(--gold)' : 'var(--border)'}`, borderRadius: '8px', padding: '0.9rem 2.5rem 0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)', cursor: 'pointer' }}
                       />
-                      {/* Dropdown Arrow */}
                       <span style={{ position: 'absolute', right: '1rem', top: '50%', transform: `translateY(-50%) rotate(${showStateDropdown ? '180deg' : '0deg'})`, transition: 'transform 0.2s', color: 'var(--muted)', pointerEvents: 'none', fontSize: '0.75rem' }}>
                         ▼
                       </span>
                     </div>
 
-                    {/* Dropdown List */}
                     {showStateDropdown && (
                       <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'var(--white)', border: '1.5px solid var(--gold)', borderRadius: '8px', maxHeight: '200px', overflowY: 'auto', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
                         {filteredStates.length === 0 ? (
@@ -254,7 +263,7 @@ export default function Checkout() {
                 ))}
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', marginBottom: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--muted)' }}>
                   <span>Subtotal</span>
                   <span style={{ color: 'var(--black)', fontWeight: 500 }}>₦{totalAmount.toLocaleString()}</span>
@@ -265,6 +274,12 @@ export default function Checkout() {
                     {shippingFee === 0 ? 'Free' : `₦${shippingFee.toLocaleString()}`}
                   </span>
                 </div>
+                {couponData && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#22c55e', fontWeight: 500 }}>
+                    <span>Discount ({couponData.code})</span>
+                    <span>-₦{couponData.discountAmount.toLocaleString()}</span>
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1.2rem 0', borderTop: '1.5px solid var(--border)', marginBottom: '1.5rem' }}>
@@ -286,7 +301,6 @@ export default function Checkout() {
           </div>
         </form>
 
-        {/* Close dropdown when clicking outside */}
         {showStateDropdown && (
           <div
             style={{ position: 'fixed', inset: 0, zIndex: 99 }}
