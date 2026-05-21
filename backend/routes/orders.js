@@ -5,6 +5,7 @@ const axios = require('axios')
 const Order = require('../models/Order')
 const Product = require('../models/Product')
 const auth = require('../middleware/auth')
+const Coupon = require('../models/Coupon')
 
 // @route POST /api/orders/initialize
 // @desc Initialize Paystack payment
@@ -83,6 +84,13 @@ router.post('/verify', auth, async (req, res) => {
     })
 
     await order.save()
+    // Update coupon used count if coupon was applied
+if (data.metadata.couponCode) {
+  await Coupon.findOneAndUpdate(
+    { code: data.metadata.couponCode },
+    { $inc: { usedCount: 1 } }
+  )
+}
 
     // Update product sold count and stock
     for (const item of parsedItems) {

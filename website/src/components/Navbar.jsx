@@ -48,16 +48,16 @@ export default function Navbar() {
 
         <div className="flex items-center gap-5">
 
-          <Link href="/" className="text-sm text-gray-600 hover:text-blue-600 transition">
+          <Link href="/" className="text-sm text-gray-600 hover:text-[#b8922e] transition">
             Home
           </Link>
 
-          <Link href="/shop" className="text-sm text-gray-600 hover:text-blue-600 transition">
+          <Link href="/shop" className="text-sm text-gray-600 hover:text-[#b8922e] transition">
             Shop
           </Link>
 
           {user && (
-            <Link href="/orders" className="text-sm text-gray-600 hover:text-blue-600 transition">
+            <Link href="/orders" className="text-sm text-gray-600 hover:text-[#b8922e] transition">
               My Orders
             </Link>
           )}
@@ -65,7 +65,7 @@ export default function Navbar() {
           <Link href="/cart" className="relative">
             <MdShoppingCart
               size={24}
-              className="text-gray-600 hover:text-blue-600 transition"
+              className="text-gray-600 hover:text-[#b8922e] transition"
             />
 
             {totalItems > 0 && (
@@ -83,7 +83,7 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-red-500 hover:text-red-700 transition"
+                className="text-red-500 hover:text-[#b8922e] transition"
               >
                 <MdLogout size={18} />
               </button>
@@ -91,7 +91,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition"
+              className="flex items-center gap-1 text-sm text-[#b8922e] hover:text-[#b8922e] transition"
             >
               <MdLogin size={18} />
               Login

@@ -1,9 +1,9 @@
- 
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
 require('dotenv').config()
 
+const couponRoutes = require('./routes/coupons')
 const connectDB = require('./conn/conn')
 connectDB()
 
@@ -33,7 +33,8 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/products', require('./routes/products'))
 app.use('/api/categories', require('./routes/categories'))
 app.use('/api/orders', require('./routes/orders'))
-
+app.use('/api/coupons', require('./routes/coupons'))
+console.log('Coupons route loading...')
 // Server
 app.listen(process.env.PORT, () => {
   console.log(`Server Started at ${process.env.PORT}`)

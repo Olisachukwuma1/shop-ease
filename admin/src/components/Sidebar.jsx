@@ -13,6 +13,8 @@ import {
   MdPeople,
   MdLogout,
 } from 'react-icons/md'
+import { MdLocalOffer } from 'react-icons/md'
+
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -44,6 +46,10 @@ export default function Sidebar() {
           <MdShoppingBag size={18} />
           Products
         </Link>
+        <Link href="/coupons" className={linkClass('/coupons')}>
+  <MdLocalOffer size={18} />
+  Coupons
+</Link>
         <Link href="/categories" className={linkClass('/categories')}>
           <MdCategory size={18} />
           Categories
