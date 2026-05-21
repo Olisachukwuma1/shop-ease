@@ -40,9 +40,11 @@ router.post('/initialize', auth, async (req, res) => {
       reference: response.data.data.reference,
     })
   } catch (_err) {
-    console.error('Paystack error:', _err.message)
-    res.status(500).json({ message: _err.message || 'Server error' })
-  }
+  console.error('Paystack FULL ERROR:', _err.response?.data)
+  res.status(500).json({
+    message: _err.response?.data?.message || _err.message,
+  })
+}
 })
 
 // @route POST /api/orders/verify
