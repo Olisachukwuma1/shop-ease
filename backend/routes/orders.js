@@ -11,8 +11,7 @@ const Coupon = require('../models/Coupon')
 // @desc Initialize Paystack payment
 router.post('/initialize', auth, async (req, res) => {
   try {
-    const { items, shippingAddress, totalAmount } = req.body
-
+    const { items, shippingAddress, totalAmount, couponCode } = req.body
     // Initialize Paystack transaction
     const response = await axios.post(
       'https://api.paystack.co/transaction/initialize',
@@ -25,6 +24,7 @@ router.post('/initialize', auth, async (req, res) => {
           userId: req.user.id,
           items: JSON.stringify(items),
           shippingAddress: JSON.stringify(shippingAddress),
+          couponCode,
         },
       },
       {
