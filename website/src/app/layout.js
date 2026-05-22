@@ -3,6 +3,7 @@ import './globals.css'
 import ReduxProvider from '../components/ReduxProvider'
 import ToastProvider from '../components/ToastProvider'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
+import WhatsAppFloat from '../components/WhatsAppFloat'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -53,6 +54,7 @@ export default function RootLayout({ children }) {
         <ReduxProvider>
           {children}
           <ToastProvider />
+           <WhatsAppFloat />
         </ReduxProvider>
       </body>
     </html>
