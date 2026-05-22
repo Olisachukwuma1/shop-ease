@@ -8,6 +8,10 @@ const pwaConfig = withPWA({
 })
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {   reactStrictMode: true,
+
+  turbopack: {}, // 👈 fixes Next 16 crash with webpack plugins
+}
+
 
 export default pwaConfig(nextConfig)
