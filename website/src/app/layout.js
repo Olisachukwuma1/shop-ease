@@ -29,11 +29,26 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: 'Shop Ease',
   description: 'Shop the best products online',
+  manifest: '/manifest.json',
+  themeColor: '#0a0a0a',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Shop Ease',
+  },
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0a0a0a" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Shop Ease" />
+      </head>
       <body>
         <ReduxProvider>
           {children}
