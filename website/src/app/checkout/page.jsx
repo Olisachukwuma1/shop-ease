@@ -22,6 +22,7 @@ export default function Checkout() {
   const dispatch = useDispatch()
   const router = useRouter()
   const { items, totalAmount } = useSelector((state) => state.cart)
+
   const [loading, setLoading] = useState(false)
   const [couponData, setCouponData] = useState(null)
 
@@ -34,9 +35,7 @@ export default function Checkout() {
 
   useEffect(() => {
     const savedCoupon = localStorage.getItem('appliedCoupon')
-    if (savedCoupon) {
-      setCouponData(JSON.parse(savedCoupon))
-    }
+    if (savedCoupon) setCouponData(JSON.parse(savedCoupon))
   }, [])
 
   const discountAmount = couponData ? couponData.discountAmount : 0
@@ -56,22 +55,15 @@ export default function Checkout() {
   const handlePayment = async (e) => {
     e.preventDefault()
 
-    if (!state) {
-      toast.error('Please select a state')
-      return
-    }
-
-    if (items.length === 0) {
-      toast.error('Your cart is empty')
-      return
-    }
+    if (!state) return toast.error('Please select a state')
+    if (items.length === 0) return toast.error('Your cart is empty')
 
     setLoading(true)
 
     try {
       const token = localStorage.getItem('token')
 
-      const orderItems = items.map((item) => ({
+      const orderItems = items.map(item => ({
         product: item._id,
         name: item.name,
         price: item.discountPrice || item.price,
@@ -92,9 +84,8 @@ export default function Checkout() {
 
       localStorage.removeItem('appliedCoupon')
       window.location.href = res.data.authorization_url
-
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Payment initialization failed')
+      toast.error(err.response?.data?.message || 'Payment failed')
       setLoading(false)
     }
   }
@@ -103,211 +94,175 @@ export default function Checkout() {
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--white)' }}>
       <Navbar />
 
-      <div style={{ padding: '4rem 5rem', flex: 1 }}>
+      {/* PAGE WRAPPER (RESPONSIVE FIX) */}
+      <div
+        style={{
+          padding: 'clamp(1.5rem, 4vw, 4rem)',
+          flex: 1
+        }}
+      >
 
+        {/* HEADER */}
         <div style={{ marginBottom: '3rem' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.5rem' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--gold)' }}>
             Almost There
           </div>
-          <h1 className="font-playfair" style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--black)' }}>
+
+          <h1
+            className="font-playfair"
+            style={{
+              fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
+              fontWeight: 700,
+              color: 'var(--black)'
+            }}
+          >
             Checkout
           </h1>
         </div>
 
         <form onSubmit={handlePayment}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '3rem', alignItems: 'start' }}>
+          {/* MAIN GRID (RESPONSIVE FIX) */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr',
+              gap: '2rem'
+            }}
+          >
 
-            {/* Shipping Form */}
+            {/* SHIPPING FORM */}
             <div>
-              <h2 className="font-playfair" style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--black)' }}>
+              <h2 className="font-playfair" style={{ fontSize: '1.3rem', marginBottom: '1.5rem' }}>
                 Shipping Address
               </h2>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
 
-                {/* Street */}
                 <div>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
+                  <label style={{ fontSize: '0.75rem', textTransform: 'uppercase' }}>
                     Street Address
                   </label>
                   <input
-                    type="text"
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
-                    required
-                    placeholder="123 Main Street"
-                    style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
+                    style={{ width: '100%', padding: '0.9rem', border: '1.5px solid var(--border)' }}
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-
-                  {/* City */}
+                {/* RESPONSIVE GRID FIX */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '1rem'
+                  }}
+                >
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
+                    <label style={{ fontSize: '0.75rem', textTransform: 'uppercase' }}>
                       City
                     </label>
                     <input
-                      type="text"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      required
-                      placeholder="Lagos"
-                      style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
+                      style={{ width: '100%', padding: '0.9rem', border: '1.5px solid var(--border)' }}
                     />
                   </div>
 
-                  {/* State - Searchable Dropdown */}
                   <div style={{ position: 'relative' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
+                    <label style={{ fontSize: '0.75rem', textTransform: 'uppercase' }}>
                       State
                     </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        type="text"
-                        value={stateSearch}
-                        onChange={(e) => {
-                          setStateSearch(e.target.value)
-                          setState('')
-                          setShowStateDropdown(true)
-                        }}
-                        onFocus={() => setShowStateDropdown(true)}
-                        required
-                        placeholder="Search state..."
-                        style={{ width: '100%', border: `1.5px solid ${showStateDropdown ? 'var(--gold)' : 'var(--border)'}`, borderRadius: '8px', padding: '0.9rem 2.5rem 0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)', cursor: 'pointer' }}
-                      />
-                      <span style={{ position: 'absolute', right: '1rem', top: '50%', transform: `translateY(-50%) rotate(${showStateDropdown ? '180deg' : '0deg'})`, transition: 'transform 0.2s', color: 'var(--muted)', pointerEvents: 'none', fontSize: '0.75rem' }}>
-                        ▼
-                      </span>
-                    </div>
+                    <input
+                      value={stateSearch}
+                      onChange={(e) => {
+                        setStateSearch(e.target.value)
+                        setShowStateDropdown(true)
+                      }}
+                      style={{ width: '100%', padding: '0.9rem', border: '1.5px solid var(--border)' }}
+                    />
 
                     {showStateDropdown && (
-                      <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, background: 'var(--white)', border: '1.5px solid var(--gold)', borderRadius: '8px', maxHeight: '200px', overflowY: 'auto', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                        {filteredStates.length === 0 ? (
-                          <div style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--muted)', textAlign: 'center' }}>
-                            No state found
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          background: 'white',
+                          border: '1px solid #ddd',
+                          maxHeight: '200px',
+                          overflowY: 'auto',
+                          zIndex: 100
+                        }}
+                      >
+                        {filteredStates.map(s => (
+                          <div
+                            key={s}
+                            onClick={() => handleStateSelect(s)}
+                            style={{ padding: '0.7rem', cursor: 'pointer' }}
+                          >
+                            {s}
                           </div>
-                        ) : (
-                          filteredStates.map((s) => (
-                            <div
-                              key={s}
-                              onClick={() => handleStateSelect(s)}
-                              style={{ padding: '0.7rem 1rem', fontSize: '0.875rem', color: 'var(--black)', cursor: 'pointer', transition: 'background 0.15s', background: state === s ? 'var(--cream)' : 'transparent', borderBottom: '1px solid var(--border)' }}
-                              onMouseEnter={e => e.currentTarget.style.background = 'var(--cream)'}
-                              onMouseLeave={e => e.currentTarget.style.background = state === s ? 'var(--cream)' : 'transparent'}
-                            >
-                              {state === s && <span style={{ color: 'var(--gold)', marginRight: '0.5rem' }}>✓</span>}
-                              {s}
-                            </div>
-                          ))
-                        )}
+                        ))}
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Country */}
-                <div>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '0.5rem' }}>
-                    Country
-                  </label>
-                  <input
-                    type="text"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    required
-                    style={{ width: '100%', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0.9rem 1rem', fontSize: '0.875rem', outline: 'none', color: 'var(--black)', background: 'var(--white)' }}
-                  />
-                </div>
-
-              </div>
-
-              {/* Payment Info */}
-              <div style={{ marginTop: '2.5rem', padding: '1.5rem', background: 'var(--cream)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
-                  <span style={{ fontSize: '1.5rem' }}>🔒</span>
-                  <div>
-                    <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--black)' }}>Secure Payment via Paystack</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Your payment info is encrypted and secure</div>
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.6 }}>
-                  You will be redirected to Paystack to complete your payment. After successful payment you will be redirected back to confirm your order.
-                </p>
               </div>
             </div>
 
-            {/* Order Summary */}
-            <div style={{ background: 'var(--cream)', borderRadius: '12px', padding: '2rem', border: '1px solid var(--border)', position: 'sticky', top: '100px' }}>
-              <h3 className="font-playfair" style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--black)' }}>
-                Order Summary
-              </h3>
+            {/* ORDER SUMMARY (RESPONSIVE FIX) */}
+            <div
+              style={{
+                background: 'var(--cream)',
+                borderRadius: '12px',
+                padding: '2rem',
+                border: '1px solid var(--border)',
+                width: '100%'
+              }}
+            >
+              <h3 className="font-playfair">Order Summary</h3>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '250px', overflowY: 'auto' }}>
-                {items.map((item) => (
-                  <div key={item._id} style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                    <div style={{ width: '48px', height: '48px', background: 'var(--white)', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                      {item.images?.[0] ? (
-                        <img src={item.images[0]} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📦</div>
-                      )}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--black)', marginBottom: '0.2rem' }}>{item.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Qty: {item.quantity}</div>
-                    </div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--black)' }}>
-                      ₦{((item.discountPrice || item.price) * item.quantity).toLocaleString()}
-                    </div>
+              {items.map(item => (
+                <div key={item._id} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+                  <img
+                    src={item.images?.[0]}
+                    style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div>{item.name}</div>
+                    <small>Qty: {item.quantity}</small>
                   </div>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', marginBottom: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--muted)' }}>
-                  <span>Subtotal</span>
-                  <span style={{ color: 'var(--black)', fontWeight: 500 }}>₦{totalAmount.toLocaleString()}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--muted)' }}>
-                  <span>Shipping</span>
-                  <span style={{ color: shippingFee === 0 ? '#22c55e' : 'var(--black)', fontWeight: 500 }}>
-                    {shippingFee === 0 ? 'Free' : `₦${shippingFee.toLocaleString()}`}
-                  </span>
-                </div>
-                {couponData && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#22c55e', fontWeight: 500 }}>
-                    <span>Discount ({couponData.code})</span>
-                    <span>-₦{couponData.discountAmount.toLocaleString()}</span>
-                  </div>
-                )}
-              </div>
+              ))}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1.2rem 0', borderTop: '1.5px solid var(--border)', marginBottom: '1.5rem' }}>
-                <span className="font-playfair" style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--black)' }}>Total</span>
-                <span className="font-playfair" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--black)' }}>
-                  ₦{grandTotal.toLocaleString()}
-                </span>
+              <div style={{ marginTop: '1rem' }}>
+                <div>Subtotal: ₦{totalAmount.toLocaleString()}</div>
+                <div>Shipping: {shippingFee === 0 ? 'Free' : `₦${shippingFee}`}</div>
+                <div style={{ fontWeight: 'bold', marginTop: '1rem' }}>
+                  Total: ₦{grandTotal.toLocaleString()}
+                </div>
               </div>
 
               <button
                 type="submit"
-                disabled={loading || items.length === 0}
-                style={{ width: '100%', background: 'var(--gold)', color: 'var(--white)', border: 'none', padding: '1rem', fontSize: '0.875rem', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '8px', transition: 'all 0.25s', opacity: loading || items.length === 0 ? 0.7 : 1 }}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  marginTop: '1rem',
+                  padding: '1rem',
+                  background: 'var(--gold)',
+                  color: 'white',
+                  border: 'none'
+                }}
               >
-                {loading ? 'Redirecting to Paystack...' : `Pay ₦${grandTotal.toLocaleString()}`}
+                {loading ? 'Processing...' : 'Pay Now'}
               </button>
             </div>
 
           </div>
         </form>
-
-        {showStateDropdown && (
-          <div
-            style={{ position: 'fixed', inset: 0, zIndex: 99 }}
-            onClick={() => setShowStateDropdown(false)}
-          />
-        )}
-
       </div>
 
       <Footer />

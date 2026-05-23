@@ -1,5 +1,4 @@
- 
-'use client'
+ 'use client'
 
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../store/slices/cartSlice'
@@ -30,7 +29,7 @@ export default function ProductCard({ product }) {
           className="w-full h-48 object-cover"
         />
       ) : (
-        <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500" />
+        <div className="w-full h-48 bg-gradient-to-br from-black-400 to-purple-500" />
       )}
 
       {/* Product Info */}
@@ -46,7 +45,7 @@ export default function ProductCard({ product }) {
           <div>
             {product.discountPrice ? (
               <div>
-                <p className="text-sm font-bold text-blue-600">
+                <p className="text-sm font-bold text-black-600">
                   ₦{product.discountPrice.toLocaleString()}
                 </p>
                 <p className="text-xs text-gray-400 line-through">
@@ -54,7 +53,7 @@ export default function ProductCard({ product }) {
                 </p>
               </div>
             ) : (
-              <p className="text-sm font-bold text-blue-600">
+              <p className="text-sm font-bold text-black-600">
                 ₦{product.price.toLocaleString()}
               </p>
             )}
@@ -63,7 +62,7 @@ export default function ProductCard({ product }) {
           <button
             onClick={handleAddToCart}
             disabled={product.stock === 0}
-            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1 bg-black-600 hover:bg-black-700 text-white text-xs px-3 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <MdShoppingCart size={14} />
             {product.stock === 0 ? 'Out of stock' : 'Add'}

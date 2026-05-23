@@ -1,4 +1,3 @@
- 
 'use client'
 
 import { useEffect, useState, Suspense } from 'react'
@@ -17,59 +16,130 @@ function VerifyContent() {
   const reference = searchParams.get('reference')
 
   useEffect(() => {
+    if (!reference) return
+
     const verifyPayment = async () => {
       try {
         const token = localStorage.getItem('token')
+
         await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/orders/verify`,
           { reference },
           { headers: { Authorization: `Bearer ${token}` } }
         )
+
         dispatch(clearCart())
         setStatus('success')
+
         setTimeout(() => router.push('/orders'), 3000)
-      } catch (_err) {
+      } catch (err) {
         setStatus('failed')
         setTimeout(() => router.push('/cart'), 3000)
       }
     }
-    if (reference) verifyPayment()
+
+    verifyPayment()
   }, [reference, dispatch, router])
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--white)' }}>
       <Navbar />
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
-        <div style={{ textAlign: 'center', maxWidth: '480px' }}>
+
+      {/* RESPONSIVE WRAPPER */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 'clamp(1.5rem, 5vw, 4rem)',
+        }}
+      >
+        <div
+          style={{
+            textAlign: 'center',
+            maxWidth: '480px',
+            width: '100%',
+          }}
+        >
+
+          {/* VERIFYING */}
           {status === 'verifying' && (
             <>
-              <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>⏳</div>
-              <h2 className="font-playfair" style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.8rem' }}>
+              <div style={{ fontSize: 'clamp(3rem, 8vw, 4rem)', marginBottom: '1.5rem' }}>
+                ⏳
+              </div>
+
+              <h2
+                className="font-playfair"
+                style={{
+                  fontSize: 'clamp(1.5rem, 5vw, 2rem)',
+                  fontWeight: 700,
+                  marginBottom: '0.8rem',
+                }}
+              >
                 Verifying Payment...
               </h2>
-              <p style={{ color: 'var(--muted)' }}>Please wait while we confirm your payment.</p>
+
+              <p style={{ color: 'var(--muted)' }}>
+                Please wait while we confirm your payment.
+              </p>
             </>
           )}
+
+          {/* SUCCESS */}
           {status === 'success' && (
             <>
-              <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🎉</div>
-              <h2 className="font-playfair" style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.8rem', color: '#22c55e' }}>
+              <div style={{ fontSize: 'clamp(3rem, 8vw, 4rem)', marginBottom: '1.5rem' }}>
+                🎉
+              </div>
+
+              <h2
+                className="font-playfair"
+                style={{
+                  fontSize: 'clamp(1.5rem, 5vw, 2rem)',
+                  fontWeight: 700,
+                  marginBottom: '0.8rem',
+                  color: '#22c55e',
+                }}
+              >
                 Payment Successful!
               </h2>
-              <p style={{ color: 'var(--muted)' }}>Your order has been placed. Redirecting to your orders...</p>
+
+              <p style={{ color: 'var(--muted)' }}>
+                Your order has been placed. Redirecting to your orders...
+              </p>
             </>
           )}
+
+          {/* FAILED */}
           {status === 'failed' && (
             <>
-              <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>❌</div>
-              <h2 className="font-playfair" style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.8rem', color: '#ef4444' }}>
+              <div style={{ fontSize: 'clamp(3rem, 8vw, 4rem)', marginBottom: '1.5rem' }}>
+                ❌
+              </div>
+
+              <h2
+                className="font-playfair"
+                style={{
+                  fontSize: 'clamp(1.5rem, 5vw, 2rem)',
+                  fontWeight: 700,
+                  marginBottom: '0.8rem',
+                  color: '#ef4444',
+                }}
+              >
                 Payment Failed
               </h2>
-              <p style={{ color: 'var(--muted)' }}>Something went wrong. Redirecting back to cart...</p>
+
+              <p style={{ color: 'var(--muted)' }}>
+                Something went wrong. Redirecting back to cart...
+              </p>
             </>
           )}
+
         </div>
       </div>
+
       <Footer />
     </div>
   )
