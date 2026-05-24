@@ -34,11 +34,11 @@ export const metadata = {
   openGraph: {
     title: 'Shop Ease',
     description: 'Luxury shopping experience',
-    url: 'https://yourdomain.com',
+    url: 'https://shop-ease-eosin-kappa.vercel.app',
     siteName: 'Shop Ease',
     images: [
       {
-        url: 'https://yourdomain.com/og-image.png',
+        url: 'https://shop-ease-eosin-kappa.vercel.app',
         width: 1200,
         height: 630,
         alt: 'Shop Ease',
