@@ -1,6 +1,3 @@
-
-
-
 import ProductDetailClient from './ProductDetailClient'
 
 export async function generateMetadata({ params }) {
@@ -10,9 +7,13 @@ export async function generateMetadata({ params }) {
       { next: { revalidate: 60 } }
     )
 
-    const product = await res.json()
+const data = await res.json()
+const product = data?.data || data
 
-    const image = product.images?.[0] || '/og-image.png'
+const image =
+  product?.images?.[0]?.startsWith('http')
+    ? product.images[0]
+    : `https://shop-ease-eosin-kappa.vercel.app${product?.images?.[0] || '/og-image.png'}`
 
     return {
       title: `${product.name} — Shop Ease`,
