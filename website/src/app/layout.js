@@ -28,6 +28,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata = {
+   metadataBase: new URL('https://shop-ease-eosin-kappa.vercel.app'),
   title: 'Shop Ease',
   description: 'Luxury shopping experience',
 
