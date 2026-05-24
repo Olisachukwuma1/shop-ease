@@ -28,7 +28,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata = {
-   metadataBase: new URL('https://shop-ease-eosin-kappa.vercel.app'),
+  metadataBase: new URL('https://shop-ease-eosin-kappa.vercel.app'),
+
   title: 'Shop Ease',
   description: 'Luxury shopping experience',
 
@@ -37,23 +38,7 @@ export const metadata = {
     description: 'Luxury shopping experience',
     url: 'https://shop-ease-eosin-kappa.vercel.app',
     siteName: 'Shop Ease',
-    images: [
-      {
-        url: 'https://shop-ease-eosin-kappa.vercel.app',
-        width: 1200,
-        height: 630,
-        alt: 'Shop Ease',
-      },
-    ],
     type: 'website',
-  },
-
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Shop Ease',
-    description: 'Luxury shopping experience',
- url: 'https://shop-ease-eosin-kappa.vercel.app',
-    siteName: 'Shop Ease',
     images: [
       {
         url: '/og-image.png',
@@ -62,7 +47,13 @@ export const metadata = {
         alt: 'Shop Ease',
       },
     ],
-    type: 'website',
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shop Ease',
+    description: 'Luxury shopping experience',
+    images: ['/og-image.png'],
   },
 }
 
