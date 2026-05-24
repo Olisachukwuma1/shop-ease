@@ -29,13 +29,39 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: 'Shop Ease',
-  description: 'Shop the best products online',
-  manifest: '/manifest.json',
-  themeColor: '#0a0a0a',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
+  description: 'Luxury shopping experience',
+
+  openGraph: {
     title: 'Shop Ease',
+    description: 'Luxury shopping experience',
+    url: 'https://yourdomain.com',
+    siteName: 'Shop Ease',
+    images: [
+      {
+        url: 'https://yourdomain.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Shop Ease',
+      },
+    ],
+    type: 'website',
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shop Ease',
+    description: 'Luxury shopping experience',
+ url: 'https://shop-ease-eosin-kappa.vercel.app',
+    siteName: 'Shop Ease',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Shop Ease',
+      },
+    ],
+    type: 'website',
   },
 }
 

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import { useParams, useRouter } from 'next/navigation'
 import { FaWhatsapp, FaFacebook, FaXTwitter, FaLink } from 'react-icons/fa6'
 
+
 export default function ProductDetail() {
   const { id } = useParams()
   const dispatch = useDispatch()
