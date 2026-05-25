@@ -1,5 +1,8 @@
 import ProductDetailClient from './ProductDetailClient'
 
+
+export const revalidate = 0
+
 export async function generateMetadata({ params }) {
   try {
     const res = await fetch(
@@ -9,16 +12,18 @@ export async function generateMetadata({ params }) {
 
     const data = await res.json()
     const product = data?.data || data
-
-const image = product.images?.[0] || '/og-image.png'
+const image =
+  product?.images?.[0]?.startsWith('http')
+    ? product.images[0]
+    : 'https://shop-ease-eosin-kappa.vercel.app/og-image.png'
 
     return {
       title: `${product?.name || 'Product'} — Shop Ease`,
       description: product?.description || 'Luxury shopping experience',
 
      openGraph: {
-  title: product.name,
-  description: product.description,
+ title: product?.name || 'Product',
+description: product?.description || 'Luxury shopping experience',
   url: `https://shop-ease-eosin-kappa.vercel.app/shop/${params.id}`,
   images: [
     {
