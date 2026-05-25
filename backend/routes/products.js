@@ -66,9 +66,11 @@ router.get('/:id', async (req, res) => {
 // @desc Create product (protected)
 router.post('/', auth, upload.array('images', 5), async (req, res) => {
   try {
+     console.log('FILES FROM CLOUDINARY:', req.files) // 👈 ADD IT HERE
     const { name, description, price, discountPrice, category, stock, featured } = req.body
 
     const images = req.files ? req.files.map(file => file.path) : []
+      console.log('IMAGE PATHS:', images) // 👈 optional extra debug
 
     const product = new Product({
       name,
