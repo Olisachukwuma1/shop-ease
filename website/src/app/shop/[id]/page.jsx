@@ -10,29 +10,25 @@ export async function generateMetadata({ params }) {
     const data = await res.json()
     const product = data?.data || data
 
-    const image =
-      product?.images?.[0]
-        ? product.images[0].startsWith('http')
-          ? product.images[0]
-          : `https://shop-ease-eosin-kappa.vercel.app${product.images[0]}`
-        : 'https://shop-ease-eosin-kappa.vercel.app/og-image.png'
+const image = product.images?.[0] || '/og-image.png'
 
     return {
       title: `${product?.name || 'Product'} — Shop Ease`,
       description: product?.description || 'Luxury shopping experience',
 
-      openGraph: {
-        title: product?.name || 'Shop Ease',
-        description: product?.description || '',
-        images: [
-          {
-            url: image,
-            width: 1200,
-            height: 630,
-            alt: product?.name || 'Product',
-          },
-        ],
-      },
+     openGraph: {
+  title: product.name,
+  description: product.description,
+  url: `https://shop-ease-eosin-kappa.vercel.app/shop/${params.id}`,
+  images: [
+    {
+      url: image,
+      width: 1200,
+      height: 630,
+      alt: product.name,
+    },
+  ],
+},
 
       twitter: {
         card: 'summary_large_image',
