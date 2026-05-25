@@ -1,7 +1,6 @@
 import ProductDetailClient from './ProductDetailClient'
 
-
-export const revalidate = 0
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }) {
   try {
@@ -12,10 +11,11 @@ export async function generateMetadata({ params }) {
 
     const data = await res.json()
     const product = data?.data || data
+
 const image =
-  product?.images?.[0]?.startsWith('http')
+  product?.images?.[0] && product.images[0].startsWith('http')
     ? product.images[0]
-    : 'https://shop-ease-eosin-kappa.vercel.app/og-image.png'
+    : null
 
     return {
       title: `${product?.name || 'Product'} — Shop Ease`,
@@ -25,14 +25,16 @@ const image =
  title: product?.name || 'Product',
 description: product?.description || 'Luxury shopping experience',
   url: `https://shop-ease-eosin-kappa.vercel.app/shop/${params.id}`,
-  images: [
-    {
-      url: image,
-      width: 1200,
-      height: 630,
-      alt: product.name,
-    },
-  ],
+  images: image
+  ? [
+      {
+        url: image,
+        width: 1200,
+        height: 630,
+        alt: product?.name,
+      },
+    ]
+  : []
 },
 
       twitter: {
